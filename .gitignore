@@ -1,0 +1,6 @@
+*.DS_Store
+/code/.ipynb_checkpoints/*
+/code/config.py
+
+/data/*
+!/data/README.md
