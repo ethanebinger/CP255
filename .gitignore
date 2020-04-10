@@ -1,5 +1,6 @@
 *.DS_Store
 /code/.ipynb_checkpoints/*
+/code/cache/*
 /code/config.py
 
 /data/*
