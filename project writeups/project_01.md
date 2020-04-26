@@ -11,7 +11,7 @@ My project will focus on how to use real-time GTFS data to identify bus bunching
 
 There is plenty of literature about bus bunching, which falls into two general categories. The first is modelling bus bunching and identifying causes. A study by Feng and Figliozzi, 2011 used real bus location data from TriMet in Portland, Oregon to identify where and when bus bunching occurred along a specific route. They defined bus bunching as two vehicles that departed from a stop within three minutes of each other and mapped the distribution of bus bunching throughout the day (Figure 1). They write that dwell time at a stop, travel time between stops, and adherence to the schedule are factors of bus bunching, but that the prevailing cause tends to be route dependent. Other studies, such as the one by Bellei and Gkoumas, 2010 are more interested in the probability theory behind bus bunching. The authors simulated headways to create an operational bus bunching model within the transit assignment step of the classic four-step model. Although that analysis is beyond what I hope to accomplish for this project it is worth noting to show how this problem has received significant attention from transportation engineers.
 
-![](project_01_figure_01.png)
+![](../img/project_01_figure_01.png)
 
 *Figure 1: Bus bunching counts for TriMet route 15 westbound. From Feng and Figliozzi, 2011. I like the way they displayed their data and am interested in creating similar visualizations in my project.*
 
