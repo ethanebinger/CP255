@@ -31,18 +31,16 @@
 								<p>The City of Oakland has been receptive to these needs and recently <a href="https://sf.streetsblog.org/2020/04/10/oakland-to-open-74-miles-of-streets-for-safe-biking-and-recreation/">identified 74 miles of streets</a> to be cordoned off for non-automotive travel in their <a href="https://www.oaklandca.gov/projects/oakland-slow-streets">Slow Streets Project</a>. Despite the decrease in vehicular travel and the need for increased sidewalk space not all cities in the Bay area are following suit. Notably, Berkeley has balked at a <a href="https://docs.google.com/document/u/1/d/e/2PACX-1vQQkbtEb3s0bfUMcLUMeu1Oa4OWnmxK9hsRLIRfw3PznZYCsc7kpUZ9pjpHS1La9PWUswL7q9LGVG7q/pub">petition</a> to repurpose Berkeley’s bicycle boulevards similar to what Oakland has done. San Francisco did recently <a href="https://www.sfexaminer.com/news/sf-follows-oaklands-lead-closes-some-streets-to-cars-during-pandemic/">close some streets</a> to through-traffic, however it is unclear whether they plan to do more nor how they identified what streets to close.</p>
 								</p>This project builds on the need for additional street closures to create safe streets in the Bay Area during the pandemic. I use open-source bike share data from Bay Wheels to identify the most frequented biking paths by system users. Together with maps of existing and planned bicycle facilities these routes can serve as recommendations for jurisdictions in the Bay Area that are looking to close streets to vehicular traffic to promote social distancing.</p>
 								
-								<p><u>Jupyter Notebooks created:</u>
+								<p><u>Project Code:</u>
 									<ul>
-									<li><a href="#">0_Process_BayWheels_Trips.ipynb</a></li>
-									<li><a href="#">1_Explore_BayWheels_Trips.ipynb</a></li>
-									<li><a href="#">2_Densify_BayWheels_Trips.ipynb</a></li>
+									<li><a href="https://github.com/ethanebinger/CP255">CP255 Github Repo</a></li>
 									</ul>
 								</p>
 								<p><u>Datasets used:</u>
 									<ul>
-									<li>System data from Bay Wheels.</li>
-									<li>Regional bicycle facilities in the Bay Area. From the Metropolitan Transportation Commission.</li>
-									<li>Census boundaries for California, including polygons for the state outline, census-designated places, and tracts.</li>
+									<li><a href="https://s3.amazonaws.com/baywheels-data/index.html"/>System data</a> from Bay Wheels</li>
+									<li><a href="http://opendata.mtc.ca.gov/datasets/regional-bike-facilities"/>Regional bicycle facilities</a> in the Bay Area from the Metropolitan Transportation Commission</li>
+									<li>Tract-level boundaries and data for California from the 2018 5-year ACS</li>
 									</ul>
 								</p>
 
@@ -58,19 +56,21 @@
 								<p>Because the March data is not representative of typical bike share travel behavior, the following analyses use the previous complete month of data from February 2020. The shelter-in-place order did not exist in February and the weather was typical of the Bay Area (if not more arid than normal) making it a reasonable proxy for typical trips.</p>
 							
 							<h3>Identifying Frequent Bicycle Routes</h3>
-								<p>OSMnx Shortest Routes</p>
+								<p>The first step was to process the raw data that comes from Bay Wheels. Possibly erroneous trips (i.e. trips that are too long, time-wise) and illogical trip (i.e. trips that are too long, distance-wise) are removed. Then the dataset was shortened to only include unique origin-destination pairs, with counts for each one (i.e. 15 trips between origin A and destination B).</p>
+								<p> The OSMnx package (Boeing, 2017) was used on the cleaned data to then calculate the shortest route between each origin-destination pair. Below is sample code and map that use the OSMnx package to generate a street network with the OpenStreetMaps API and query the path between two nodes.</p>
 								<img src="../img/osmnx_shortest_route.png" alt="" width="100%"/>
-								<br>
-								<p>OSMnx Unique Routes</p>
+								<span style="font-size:10px; float:right"><i>Example of OSMnx Shortest Path Method</i></span>
+								<br><br>
+								<p>The goal is to identify the streets Bay Wheels riders frequent the most. The images below display this process. Geospatial methods (<code>gpd.geometry.unary_union</code>, <code>gpd.tools.jsoin</code>) were applied to the routes queried using OSMnx (left image) to create a dataset with only unique segments (right image).</p>
 								<img src="../img/osmnx_unique_route.png" alt="" width="100%"/>
-								<br>
-								<p>Mapping it all together</p>
+								<span style="font-size:10px; float:right"><i>Generating Unique Route Segments</i></span>
+								<br><br>
+								<p>This processed dataset of segments was then intersected with the paths from all Bay Wheels routes to output counts of trips over each segment. This layer and the locations of bicycle facilities in the Bay Area are displayed below in an interactive map. Pan and zoom around San Francisco, Berkeley/Oakland, and San Jose to see where Bay Wheels users frequently travel.</p>
 								<iframe width="100%" height="600px" src="project_04/BayWheels_freq_routes.html" frameborder="0" scrolling="no"></iframe>
 							
 							<br><br>
 							<h3>Street Closure Recommendations</h3>
-								<p>Using the map above, along with data on the population density per tract (from the Census) I can recommend streets that should be closed to through-traffic. These streets are displayed in red below. The blue dots indicate bike share stations in the Bay Wheels system and the yellow lines are already closed streets in San Francisco (the streets closed in Oakland are currently being digitized and will be added to the map below when complete).<p/>
-								<iframe width="100%" height="600px" src="project_04/BayWheels_close_routes.html" frameborder="0" scrolling="no"></iframe>
+								<p>Using the map above, along with data on the population density per tract (from the Census) I recommend that the following streets be closed to through-traffic to improve social distancing in the Bay Area:</p>
 								<div class="streets_row">
 								<div class="streets_column">
 									<ul><b>San Francisco:</b>
@@ -112,6 +112,9 @@
 									</ul>
 								</div>
 								</div>
+								<p>These streets are displayed in red below. The blue dots indicate bike share stations in the Bay Wheels system and the yellow lines are already closed streets in San Francisco (the streets closed in Oakland are currently being digitized and will be added to the map below when complete).</p>
+								<iframe width="100%" height="600px" src="project_04/BayWheels_close_routes.html" frameborder="0" scrolling="no"></iframe>
+								<br><br>
 							
 							<h3>Next Steps</h3>
 								<p>There are some important considerations to note in these recommendations. Only trips from February 2020 were analyzed. That month of travel may not be representative of the entire Bay Wheels system. However, it was the last full month of non-shelter-in-place data and has the most recent selection of active bike share stations. Additionally, as mentioned above, many of the bike share trips are taken for commuting purposes. Removing circuitous trips may have furthered this skew. It is unclear whether trip purpose has an impact on route. It is also likely that many street closures to promote social distancing do not need to be in downtown business districts, but in urban neighborhoods with families looking to get exercise or high percentages of essential workers.</p>
@@ -122,7 +125,9 @@
 							<h3>References</h3>
 								<p>“AC Transit Service Bulletins.” http://www.actransit.org/servicebulletins/. Accessed Apr. 13, 2020.</p>
 								<p>Boeing, G. "OSMnx: New Methods for Acquiring, Constructing, Analyzing, and Visualizing Complex Street Networks." <i>Computers, Environment and Urban Systems 65</i> (2017), pp. 126-139.</p>
+								<p>Dowd, Katie. "San Francisco is closing these streets to help with social distancing." <i>SF Gate</i>, Apr. 21, 2020. https://www.sfgate.com/bayarea/article/San-Francisco-is-closing-slow-streets-15215512.php.
 								<p>Laker, Laura. “World cities turn their streets over to walkers and cyclists.” <i>The Guardian</i>, Apr. 11, 2020. https://www.theguardian.com/world/2020/apr/11/world-cities-turn-their-streets-over-to-walkers-and-cyclists.</p>
+								<p>"Oakland Slow Streets." <i>City of Oakland</i>. Accessed Apr. 24, 2020. https://www.oaklandca.gov/projects/oakland-slow-streets
 								<p>Rudick, Roger. “People Desperate for Space, but so far Bay Area Won’t Open Streets.” <i>Streetsblog</i>, Mar. 30, 2020. https://sf.streetsblog.org/2020/03/30/people-desperate-for-space-but-so-far-bay-area-officials-wont-open-streets/.</p>
 								<p>Rudick, Roger. “Oakland to Open 74 Miles of Streets for Walkers and Cyclists.” <i>Streetsblog</i>, Apr. 10, 2020. https://sf.streetsblog.org/2020/04/10/oakland-to-open-74-miles-of-streets-for-safe-biking-and-recreation/.</p>
 								<p>“System Data.” Lyft. Accessed Apr 10., 2020. https://www.lyft.com/bikes/bay-wheels/system-data.</p>
